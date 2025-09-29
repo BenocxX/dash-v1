@@ -6,8 +6,14 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class DashLang {
+    private static boolean hadError = false;
+
     public static void runFile(String path) throws IOException {
         run(FileReader.readSource(path));
+
+        if (hadError) {
+            System.exit(1);
+        }
     }
 
     public static void runPrompt() {
@@ -22,7 +28,13 @@ public class DashLang {
             }
 
             run(line);
+            hadError = false;
         }
+    }
+
+    public static void error(int line, String message) {
+        System.err.println("[line " + line + "] Error: " + message);
+        hadError = true;
     }
 
     private static void run(String source) {
