@@ -10,4 +10,6 @@ public static void main(String[] args) throws IOException {
         DashLang.runFile(args[0]);
         return;
     }
+
+    DashLang.runPrompt();
 }
