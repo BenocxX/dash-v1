@@ -1,6 +1,8 @@
 package lang.lexer;
 
+import lang.DashLang;
 import lang.tokens.Token;
+import lang.tokens.TokenType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,5 +22,56 @@ public class Lexer {
         this.start = 0;
         this.current = 0;
         this.line = 1;
+    }
+
+    public List<Token> scanTokens() {
+        while (!isAtEnd()) {
+            // Start représente le début d'un nouveau lexeme
+            start = current;
+            scanToken();
+        }
+
+        tokens.add(new Token(TokenType.EOF, "", null, line));
+        return tokens;
+    }
+
+    private void scanToken() {
+        char character = advance();
+
+        switch (character) {
+            // Single character
+            case '(': addToken(TokenType.LEFT_PAREN); break;
+            case ')': addToken(TokenType.RIGHT_PAREN); break;
+            case '{': addToken(TokenType.LEFT_BRACE); break;
+            case '}': addToken(TokenType.RIGHT_BRACE); break;
+            case ',': addToken(TokenType.COMMA); break;
+            case '.': addToken(TokenType.DOT); break;
+            case ';': addToken(TokenType.SEMICOLON); break;
+            case '+': addToken(TokenType.PLUS); break;
+            case '-': addToken(TokenType.MINUS); break;
+            case '*': addToken(TokenType.STAR); break;
+
+            default:
+                // Unused characters (ex: '@', '#', '$', '^', '%', etc.)
+                DashLang.error(line, "Unexpected character: " + character);
+                break;
+        }
+    }
+
+    private char advance() {
+        return source.charAt(current++);
+    }
+
+    private boolean isAtEnd() {
+        return current >= source.length();
+    }
+
+    private void addToken(TokenType type) {
+        addToken(type, null);
+    }
+
+    private void addToken(TokenType type, Object literal) {
+        String lexeme = source.substring(start, current);
+        tokens.add(new Token(type, lexeme, literal, line));
     }
 }
