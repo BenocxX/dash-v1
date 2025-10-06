@@ -51,11 +51,37 @@ public class Lexer {
             case '-': addToken(TokenType.MINUS); break;
             case '*': addToken(TokenType.STAR); break;
 
+            case '!':
+                addToken(match('=') ? TokenType.BANG_EQUAL : TokenType.BANG);
+                break;
+            case '=':
+                addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);
+                break;
+            case '<':
+                addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
+                break;
+            case '>':
+                addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
+                break;
+
             default:
                 // Unused characters (ex: '@', '#', '$', '^', '%', etc.)
                 DashLang.error(line, "Unexpected character: " + character);
                 break;
         }
+    }
+
+    private boolean match(char expected) {
+        if (isAtEnd()) {
+            return false;
+        }
+
+        if (source.charAt(current) != expected) {
+            return false;
+        }
+
+        current++;
+        return true;
     }
 
     private char advance() {

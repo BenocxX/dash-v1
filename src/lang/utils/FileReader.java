@@ -1,23 +1,24 @@
 package lang.utils;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Objects;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 public class FileReader {
     public static String readSource(String path) throws IOException {
         byte[] bytes = readBytes(path);
-        return new String(bytes, Charset.defaultCharset());
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     private static byte[] readBytes(String path) throws IOException {
-        String filePath = Objects.requireNonNull(
-                FileReader.class
-                        .getClassLoader()
-                        .getResource(path)
-                        .getPath());
-        return Files.readAllBytes(Paths.get(filePath));
+        InputStream inputStream = FileReader.class.getClassLoader().getResourceAsStream(path);
+        if (inputStream == null) {
+            throw new IOException("Resource not found: " + path);
+        }
+
+        byte[] bytes = inputStream.readAllBytes();
+        inputStream.close();
+
+        return bytes;
     }
 }
