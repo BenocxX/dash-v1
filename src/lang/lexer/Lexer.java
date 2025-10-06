@@ -74,6 +74,15 @@ public class Lexer {
                 }
                 break;
 
+            case ' ':
+            case '\r':
+            case '\t':
+                break;
+
+            case '\n':
+                line++;
+                break;
+
             default:
                 // Unused characters (ex: '@', '#', '$', '^', '%', etc.)
                 DashLang.error(line, "Unexpected character: " + character);
