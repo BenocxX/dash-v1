@@ -3,3 +3,4 @@
 !+-*/=<> <= >= == != // Binary characters
 "Bonjour"
 1 123 123.123 -3
+myVariable = 123;

@@ -90,6 +90,8 @@ public class Lexer {
             default:
                 if (isDigit(character)) {
                     number();
+                } else if (isAlpha(character)) {
+                    identifier();
                 } else {
                     // Unused characters (ex: '@', '#', '$', '^', '%', etc.)
                     DashLang.error(line, "Unexpected character: " + character);
@@ -139,6 +141,16 @@ public class Lexer {
         return character >= '0' && character <= '9';
     }
 
+    private boolean isAlpha(char character) {
+        return (character >= 'a' && character <= 'z') ||
+                (character >= 'A' && character <= 'Z') ||
+                character == '_';
+    }
+
+    private boolean isAlphaNumeric(char character) {
+        return isAlpha(character) || isDigit(character);
+    }
+
     private void addToken(TokenType type) {
         addToken(type, null);
     }
@@ -183,5 +195,13 @@ public class Lexer {
 
         Double value = Double.parseDouble(source.substring(start, current));
         addToken(TokenType.NUMBER, value);
+    }
+
+    private void identifier() {
+        while (isAlphaNumeric(peek())) {
+            advance();
+        }
+
+        addToken(TokenType.IDENTIFIER);
     }
 }
