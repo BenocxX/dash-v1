@@ -88,6 +88,14 @@ public class Lexer {
         return source.charAt(current++);
     }
 
+    private char peek() {
+        if (isAtEnd()) {
+            return Character.MIN_VALUE;
+        }
+
+        return source.charAt(current);
+    }
+
     private boolean isAtEnd() {
         return current >= source.length();
     }
