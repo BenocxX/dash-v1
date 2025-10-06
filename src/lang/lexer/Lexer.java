@@ -64,6 +64,16 @@ public class Lexer {
                 addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);
                 break;
 
+            case '/':
+                if (match('/')) { // Is a comment
+                    while (peek() != '\n' && !isAtEnd()) {
+                        advance();
+                    }
+                } else { // Is a division
+                    addToken(TokenType.SLASH);
+                }
+                break;
+
             default:
                 // Unused characters (ex: '@', '#', '$', '^', '%', etc.)
                 DashLang.error(line, "Unexpected character: " + character);
