@@ -1,2 +1,5 @@
-hello world
-test
+// This is a comment
+(( )) {} // Grouping Characters
+!+-*/=<> <= >= == != // Binary characters
+"Bonjour"
+1 123 123.123 -3

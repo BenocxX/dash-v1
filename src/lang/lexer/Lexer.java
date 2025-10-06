@@ -83,9 +83,17 @@ public class Lexer {
                 line++;
                 break;
 
+            case '"':
+                string();
+                break;
+
             default:
-                // Unused characters (ex: '@', '#', '$', '^', '%', etc.)
-                DashLang.error(line, "Unexpected character: " + character);
+                if (isDigit(character)) {
+                    number();
+                } else {
+                    // Unused characters (ex: '@', '#', '$', '^', '%', etc.)
+                    DashLang.error(line, "Unexpected character: " + character);
+                }
                 break;
         }
     }
@@ -115,8 +123,20 @@ public class Lexer {
         return source.charAt(current);
     }
 
+    private char peekNext() {
+        if (current + 1 >= source.length()) {
+            return Character.MIN_VALUE;
+        }
+
+        return source.charAt(current + 1);
+    }
+
     private boolean isAtEnd() {
         return current >= source.length();
+    }
+
+    private boolean isDigit(char character) {
+        return character >= '0' && character <= '9';
     }
 
     private void addToken(TokenType type) {
@@ -126,5 +146,42 @@ public class Lexer {
     private void addToken(TokenType type, Object literal) {
         String lexeme = source.substring(start, current);
         tokens.add(new Token(type, lexeme, literal, line));
+    }
+
+    private void string() {
+        while (peek() != '"' && !isAtEnd()) {
+            if (peek() == '\n') {
+                line++;
+            }
+
+            advance();
+        }
+
+        if (isAtEnd()) {
+            DashLang.error(line, "Unterminated string.");
+        }
+
+        // Une fois qu'on a trouvé le guillemet fermant,
+        // on passe au prochain caractère
+        advance();
+
+        // value = "ASDASDASD";
+        String value = source.substring(start + 1, current - 1);
+        addToken(TokenType.STRING, value);
+    }
+
+    private void number() {
+        while (isDigit(peek())) {
+            advance();
+        }
+
+        if (peek() == '.' && isDigit(peekNext())) {
+            do {
+                advance();
+            } while (isDigit(peek()));
+        }
+
+        Double value = Double.parseDouble(source.substring(start, current));
+        addToken(TokenType.NUMBER, value);
     }
 }

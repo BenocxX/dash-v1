@@ -1,8 +1,11 @@
 package lang;
 
+import lang.lexer.Lexer;
+import lang.tokens.Token;
 import lang.utils.FileReader;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class DashLang {
@@ -38,7 +41,14 @@ public class DashLang {
     }
 
     private static void run(String source) {
+        System.out.println("Source:");
         System.out.println(source);
         System.out.println();
+
+        Lexer lexer = new Lexer(source);
+        List<Token> tokens = lexer.scanTokens();
+        for (Token token : tokens) {
+            System.out.println("Token " + token);
+        }
     }
 }
