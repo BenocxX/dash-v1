@@ -5,11 +5,14 @@ import lang.tokens.Token;
 import lang.tokens.TokenType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Lexer {
     private final String source;
     private final List<Token> tokens;
+    private final Map<String, TokenType> keywords;
 
     private int start;
     private int current;
@@ -18,10 +21,13 @@ public class Lexer {
     public Lexer(String source) {
         this.source = source;
         this.tokens = new ArrayList<>();
+        this.keywords = new HashMap<>();
 
         this.start = 0;
         this.current = 0;
         this.line = 1;
+
+        initializeKeywords();
     }
 
     public List<Token> scanTokens() {
@@ -202,6 +208,25 @@ public class Lexer {
             advance();
         }
 
-        addToken(TokenType.IDENTIFIER);
+        String lexeme = source.substring(start, current);
+        TokenType type = keywords.get(lexeme);
+        addToken(type == null ? TokenType.IDENTIFIER : type);
+    }
+
+    private void initializeKeywords() {
+        keywords.put("var", TokenType.VAR);
+        keywords.put("true", TokenType.TRUE);
+        keywords.put("false", TokenType.FALSE);
+        keywords.put("nil", TokenType.NIL);
+
+        keywords.put("if", TokenType.IF);
+        keywords.put("else", TokenType.ELSE);
+        keywords.put("or", TokenType.OR);
+        keywords.put("and", TokenType.AND);
+
+        keywords.put("while", TokenType.WHILE);
+        keywords.put("for", TokenType.FOR);
+
+        keywords.put("print", TokenType.PRINT);
     }
 }

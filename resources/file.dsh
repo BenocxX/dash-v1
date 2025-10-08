@@ -1,6 +1,4 @@
-// This is a comment
-(( )) {} // Grouping Characters
-!+-*/=<> <= >= == != // Binary characters
-"Bonjour"
-1 123 123.123 -3
-myVariable = 123;
+myVariable = "Bonjour";
+if (true) { // If condition;
+  myVariable = "world";
+}
