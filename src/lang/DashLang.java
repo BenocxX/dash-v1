@@ -43,6 +43,14 @@ public class DashLang {
         hadError = true;
     }
 
+    public static void error(Token token, String message) {
+        if (token.type == TokenType.EOF) {
+            System.err.println("[line " + token.line + " ] Error at end: " + message);
+        } else {
+            System.err.println("[line " + token.line + " ] Error at '" + token.lexeme + "' " + message);
+        }
+    }
+
     private static void run(String source) {
         System.out.println("Source:");
         System.out.println(source);
