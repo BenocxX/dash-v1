@@ -1,5 +1,6 @@
 package lang.expressions;
 
+import lang.ast.AstPrinter;
 import lang.tokens.Token;
 
 public class BinaryExpression extends Expression {
@@ -11,5 +12,10 @@ public class BinaryExpression extends Expression {
         this.left = left;
         this.operator = operator;
         this.right = right;
+    }
+
+    @Override
+    public String print(AstPrinter printer) {
+        return printer.parenthesize(operator.lexeme, left, right);
     }
 }

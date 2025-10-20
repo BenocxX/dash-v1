@@ -1,13 +1,19 @@
 package lang.expressions;
 
+import lang.ast.AstPrinter;
 import lang.tokens.Token;
 
 public class UnaryExpression extends Expression {
     public final Token operator;
-    public final Expression expression;
+    public final Expression right;
 
-    public UnaryExpression(Token operator, Expression expression) {
+    public UnaryExpression(Token operator, Expression right) {
         this.operator = operator;
-        this.expression = expression;
+        this.right = right;
+    }
+
+    @Override
+    public String print(AstPrinter printer) {
+        return printer.parenthesize(operator.lexeme, right);
     }
 }
