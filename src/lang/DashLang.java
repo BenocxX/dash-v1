@@ -54,18 +54,5 @@ public class DashLang {
             System.out.println("Token " + token);
         }
         System.out.println();
-
-        // -123 * (45.67)
-        Expression expression = new BinaryExpression(
-                new UnaryExpression(
-                        new Token(TokenType.MINUS, "-", null, 1),
-                        new LiteralExpression(123)
-                ),
-                new Token(TokenType.STAR, "*", null, 1),
-                new GroupingExpression(
-                        new LiteralExpression(45.67)
-                )
-        );
-        System.out.println(expression.print(new AstPrinter()));
     }
 }
