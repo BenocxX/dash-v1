@@ -33,4 +33,23 @@ public class Parser {
 
         return previous();
     }
+
+    private boolean check(TokenType type) {
+        if (isAtEnd()) {
+            return false;
+        }
+
+        return peek().type == type;
+    }
+
+    private boolean match(TokenType... types) {
+        for (TokenType type : types) {
+            if (check(type)) {
+                advance();
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
