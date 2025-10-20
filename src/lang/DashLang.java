@@ -1,7 +1,10 @@
 package lang;
 
+import lang.ast.AstPrinter;
+import lang.expressions.*;
 import lang.lexer.Lexer;
 import lang.tokens.Token;
+import lang.tokens.TokenType;
 import lang.utils.FileReader;
 
 import java.io.IOException;
@@ -50,5 +53,19 @@ public class DashLang {
         for (Token token : tokens) {
             System.out.println("Token " + token);
         }
+        System.out.println();
+
+        // -123 * (45.67)
+        Expression expression = new BinaryExpression(
+                new UnaryExpression(
+                        new Token(TokenType.MINUS, "-", null, 1),
+                        new LiteralExpression(123)
+                ),
+                new Token(TokenType.STAR, "*", null, 1),
+                new GroupingExpression(
+                        new LiteralExpression(45.67)
+                )
+        );
+        System.out.println(expression.print(new AstPrinter()));
     }
 }
