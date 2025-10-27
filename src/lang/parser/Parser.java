@@ -17,6 +17,14 @@ public class Parser {
         this.tokens = tokens;
     }
 
+    public Expression parse() {
+        try {
+            return expression();
+        } catch (ParseError error) {
+            return null;
+        }
+    }
+
     // expression -> equality ;
     private Expression expression() {
         return equality();

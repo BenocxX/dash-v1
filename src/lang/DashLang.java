@@ -3,6 +3,7 @@ package lang;
 import lang.ast.AstPrinter;
 import lang.expressions.*;
 import lang.lexer.Lexer;
+import lang.parser.Parser;
 import lang.tokens.Token;
 import lang.tokens.TokenType;
 import lang.utils.FileReader;
@@ -49,6 +50,8 @@ public class DashLang {
         } else {
             System.err.println("[line " + token.line + " ] Error at '" + token.lexeme + "' " + message);
         }
+
+        hadError = true;
     }
 
     private static void run(String source) {
@@ -62,5 +65,14 @@ public class DashLang {
             System.out.println("Token " + token);
         }
         System.out.println();
+
+        Parser parser = new Parser(tokens);
+            Expression expression = parser.parse();
+
+        if (hadError) {
+            return;
+        }
+
+        System.out.println(expression.print(new AstPrinter()));
     }
 }
