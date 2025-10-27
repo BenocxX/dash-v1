@@ -1,5 +1,6 @@
 package lang.expressions;
 
+import lang.interpreter.Interpreter;
 import lang.utils.AstPrinter;
 
 public class LiteralExpression extends Expression {
@@ -13,5 +14,10 @@ public class LiteralExpression extends Expression {
     @Override
     public String print(AstPrinter printer) {
         return value == null ? "nil" : value.toString();
+    }
+
+    @Override
+    public Object interpret(Interpreter interpreter) {
+        return value;
     }
 }
