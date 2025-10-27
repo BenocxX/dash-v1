@@ -1,6 +1,6 @@
 package lang.expressions;
 
-import lang.ast.AstPrinter;
+import lang.utils.AstPrinter;
 
 public class GroupingExpression extends Expression {
     public final Expression expression;

@@ -1,6 +1,6 @@
 package lang.expressions;
 
-import lang.ast.AstPrinter;
+import lang.utils.AstPrinter;
 
 public class LiteralExpression extends Expression {
     // TODO: Private pls bro

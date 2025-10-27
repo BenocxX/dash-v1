@@ -1,4 +1,4 @@
-package lang.ast;
+package lang.utils;
 
 import lang.expressions.Expression;
 

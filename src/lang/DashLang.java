@@ -1,6 +1,6 @@
 package lang;
 
-import lang.ast.AstPrinter;
+import lang.utils.AstPrinter;
 import lang.expressions.*;
 import lang.lexer.Lexer;
 import lang.parser.Parser;

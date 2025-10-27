@@ -1,6 +1,6 @@
 package lang.expressions;
 
-import lang.ast.AstPrinter;
+import lang.utils.AstPrinter;
 import lang.tokens.Token;
 
 public class UnaryExpression extends Expression {
