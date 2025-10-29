@@ -1,5 +1,8 @@
 package lang.interpreter;
 
+import lang.errors.RuntimeError;
+import lang.tokens.Token;
+
 public class Interpreter {
     public Object add(Object left, Object right) {
         if (left instanceof Double && right instanceof Double) {
@@ -67,5 +70,21 @@ public class Interpreter {
         }
 
         return true;
+    }
+
+    public void checkNumberOperand(Token operator, Object operand) {
+        if (operand instanceof Double) {
+            return;
+        }
+
+        throw new RuntimeError(operator, "Operand must be a number");
+    }
+
+    public void checkNumberOperands(Token operator, Object left, Object right) {
+        if (left instanceof Double && right instanceof Double) {
+            return;
+        }
+
+        throw new RuntimeError(operator, "Operands must be numbers");
     }
 }

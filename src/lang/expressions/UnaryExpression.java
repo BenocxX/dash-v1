@@ -23,10 +23,14 @@ public class UnaryExpression extends Expression {
     public Object interpret(Interpreter interpreter) {
         Object right = this.right.interpret(interpreter);
 
-        return switch (operator.type) {
-            case TokenType.MINUS -> -(double) right;
-            case TokenType.BANG -> !interpreter.isTruthy(right);
-            default -> null;
-        };
+        switch (operator.type) {
+            case TokenType.MINUS:
+                interpreter.checkNumberOperand(operator, right);
+                return -(double) right;
+            case TokenType.BANG:
+                return !interpreter.isTruthy(right);
+        }
+
+        return null;
     }
 }
