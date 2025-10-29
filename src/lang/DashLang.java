@@ -1,5 +1,7 @@
 package lang;
 
+import lang.errors.RuntimeError;
+import lang.interpreter.Interpreter;
 import lang.utils.AstPrinter;
 import lang.expressions.*;
 import lang.lexer.Lexer;
@@ -14,11 +16,12 @@ import java.util.Scanner;
 
 public class DashLang {
     private static boolean hadError = false;
+    private static boolean hadRuntimeError = false;
 
     public static void runFile(String path) throws IOException {
         run(FileReader.readSource(path));
 
-        if (hadError) {
+        if (hadError || hadRuntimeError) {
             System.exit(1);
         }
     }
@@ -54,6 +57,11 @@ public class DashLang {
         hadError = true;
     }
 
+    public static void runtimeError(RuntimeError error) {
+        System.err.println(error.getMessage() + "\n[line " + error.token.line + "]");
+        hadRuntimeError = true;
+    }
+
     private static void run(String source) {
         System.out.println("Source:");
         System.out.println(source);
@@ -67,12 +75,16 @@ public class DashLang {
         System.out.println();
 
         Parser parser = new Parser(tokens);
-            Expression expression = parser.parse();
+        Expression expression = parser.parse();
 
         if (hadError) {
             return;
         }
 
         System.out.println(expression.print(new AstPrinter()));
+        System.out.println();
+
+        Interpreter interpreter = new Interpreter();
+        System.out.println(interpreter.interpret(expression));
     }
 }
