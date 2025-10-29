@@ -3,9 +3,13 @@ package lang.parser;
 import lang.DashLang;
 import lang.errors.ParseError;
 import lang.expressions.*;
+import lang.statements.ExpressionStatement;
+import lang.statements.PrintStatement;
+import lang.statements.Statement;
 import lang.tokens.Token;
 import lang.tokens.TokenType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
@@ -17,12 +21,37 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    public Expression parse() {
-        try {
-            return expression();
-        } catch (ParseError error) {
-            return null;
+    // program -> statement* EOF ;
+    public List<Statement> parse() {
+        // TODO: Re-add error handling later when we have more statements
+        List<Statement> statements = new ArrayList<>();
+
+        while (!isAtEnd()) {
+            statements.add(statement());
         }
+
+        return statements;
+    }
+
+    // statement -> exprStmt | printStmt
+    private Statement statement() {
+        if (match(TokenType.PRINT)) return printStatement();
+
+        return expressionStatement();
+    }
+
+    // printStmt -> "print" expression ";" ;
+    private Statement printStatement() {
+        Expression expression = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after value.");
+        return new PrintStatement(expression);
+    }
+
+    // exprStmt -> expression ";" ;
+    private Statement expressionStatement() {
+        Expression expression = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+        return new ExpressionStatement(expression);
     }
 
     // expression -> equality ;
