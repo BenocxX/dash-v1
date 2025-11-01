@@ -2,6 +2,7 @@ package lang;
 
 import lang.errors.RuntimeError;
 import lang.interpreter.Interpreter;
+import lang.statements.Statement;
 import lang.utils.AstPrinter;
 import lang.expressions.*;
 import lang.lexer.Lexer;
@@ -75,16 +76,13 @@ public class DashLang {
         System.out.println();
 
         Parser parser = new Parser(tokens);
-        Expression expression = parser.parse();
+        List<Statement> statements = parser.parse();
 
         if (hadError) {
             return;
         }
 
-        System.out.println(expression.print(new AstPrinter()));
-        System.out.println();
-
         Interpreter interpreter = new Interpreter();
-        System.out.println(interpreter.interpret(expression));
+        interpreter.interpret(statements);
     }
 }

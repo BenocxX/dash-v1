@@ -3,18 +3,20 @@ package lang.interpreter;
 import lang.DashLang;
 import lang.errors.RuntimeError;
 import lang.expressions.Expression;
+import lang.statements.Statement;
 import lang.tokens.Token;
 
+import java.util.List;
+
 public class Interpreter {
-    public String interpret(Expression expression) {
+    public void interpret(List<Statement> statements) {
         try {
-            Object value = expression.interpret(this);
-            return stringify(value);
+            for (Statement statement : statements) {
+                statement.interpret(this);
+            }
         } catch (RuntimeError error) {
             DashLang.runtimeError(error);
         }
-
-        return "Error";
     }
 
     public Object add(Object left, Object right) {
@@ -72,6 +74,27 @@ public class Interpreter {
         return left.equals(right);
     }
 
+    public String stringify(Object value) {
+        if (value == null) {
+            return "nil";
+        }
+
+        if (value instanceof Double) {
+            String text = value.toString();
+
+            // var x = 27;
+            // print x; // Normalement 27.0, mais on coupe le ".0" afin de
+            //          // cacher notre utilisation des Doubles.
+            if (text.endsWith(".0")) {
+                text = text.substring(0, text.length() - 2);
+            }
+
+            return text;
+        }
+
+        return value.toString();
+    }
+
     // Seulement "nil" et "false" sont des valeurs "falsy", tout le reste est "truthy"
     public boolean isTruthy(Object value) {
         if (value == null) {
@@ -99,26 +122,5 @@ public class Interpreter {
         }
 
         throw new RuntimeError(operator, "Operands must be numbers");
-    }
-
-    private String stringify(Object value) {
-        if (value == null) {
-            return "nil";
-        }
-
-        if (value instanceof Double) {
-            String text = value.toString();
-
-            // var x = 27;
-            // print x; // Normalement 27.0, mais on coupe le ".0" afin de
-            //          // cacher notre utilisation des Doubles.
-            if (text.endsWith(".0")) {
-                text = text.substring(0, text.length() - 2);
-            }
-
-            return text;
-        }
-
-        return value.toString();
     }
 }

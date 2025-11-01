@@ -1,4 +1,2 @@
-myVariable = "Bonjour";
-if (true) { // If condition;
-  myVariable = "world";
-}
+print 10 + 2;
+print true == true;
