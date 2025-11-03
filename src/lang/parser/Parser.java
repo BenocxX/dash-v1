@@ -6,6 +6,7 @@ import lang.expressions.*;
 import lang.statements.ExpressionStatement;
 import lang.statements.PrintStatement;
 import lang.statements.Statement;
+import lang.statements.VariableStatement;
 import lang.tokens.Token;
 import lang.tokens.TokenType;
 
@@ -21,16 +22,44 @@ public class Parser {
         this.tokens = tokens;
     }
 
-    // program -> statement* EOF ;
+    // program -> declaration* EOF ;
     public List<Statement> parse() {
-        // TODO: Re-add error handling later when we have more statements
         List<Statement> statements = new ArrayList<>();
 
         while (!isAtEnd()) {
-            statements.add(statement());
+            statements.add(declaration());
         }
 
         return statements;
+    }
+
+    // declaration -> varDeclaration | statement ;
+    public Statement declaration() {
+        try {
+            if (match(TokenType.VAR)) {
+                return varDeclaration();
+            }
+
+            return statement();
+        } catch (ParseError error) {
+            synchronize();
+            return null;
+        }
+    }
+
+    // var IDENTIFIER;
+    // var IDENTIFIER = expression;
+    // varDeclaration -> "var" IDENTIFIER ( "=" expression )? ";" ;
+    private Statement varDeclaration() {
+        Token name = consume(TokenType.IDENTIFIER, "Expect variable name.");
+
+        Expression initializer = null;
+        if (match(TokenType.EQUAL)) {
+            initializer = expression();
+        }
+
+        consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        return new VariableStatement(name, initializer);
     }
 
     // statement -> exprStmt | printStmt
@@ -126,13 +155,14 @@ public class Parser {
         return primary();
     }
 
-    // primary -> NUMBER | STRING | "true" | "false" | "nil" | "(" expression ")" ;
+    // primary -> NUMBER | STRING | "true" | "false" | "nil" | IDENTIFIER | "(" expression ")" ;
     private Expression primary() {
         if (match(TokenType.TRUE)) return new LiteralExpression(true);
         if (match(TokenType.FALSE)) return new LiteralExpression(false);
         if (match(TokenType.NIL)) return new LiteralExpression(null);
         if (match(TokenType.NUMBER)) return new LiteralExpression(previous().literal);
         if (match(TokenType.STRING)) return new LiteralExpression(previous().literal);
+        if (match(TokenType.IDENTIFIER)) return new VariableExpression(previous());
 
         if (match(TokenType.LEFT_PAREN)) {
             Expression expression = expression();
@@ -193,5 +223,20 @@ public class Parser {
     private ParseError error(Token token, String message) {
         DashLang.error(token, message);
         return new ParseError();
+    }
+
+    // Ignores tokens until next declaration/statement
+    private void synchronize() {
+        advance();
+
+        while (!isAtEnd()) {
+            switch (peek().type) {
+                case TokenType.SEMICOLON, TokenType.IF, TokenType.PRINT,
+                     TokenType.VAR, TokenType.WHILE:
+                    return;
+            }
+
+            advance();
+        }
     }
 }
