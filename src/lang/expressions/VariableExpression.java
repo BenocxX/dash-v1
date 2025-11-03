@@ -19,6 +19,6 @@ public class VariableExpression extends Expression {
 
     @Override
     public Object interpret(Interpreter interpreter) {
-        return null;
+        return interpreter.getEnvironment().get(name);
     }
 }
