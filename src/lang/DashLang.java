@@ -16,13 +16,24 @@ import java.util.List;
 import java.util.Scanner;
 
 public class DashLang {
+    public static boolean debug = true;
+    public static boolean exitOnFailure = true;
+
     private static boolean hadError = false;
     private static boolean hadRuntimeError = false;
+
+    public static void runString(String source) {
+        run(source);
+
+        if ((hadError || hadRuntimeError) && exitOnFailure) {
+            System.exit(1);
+        }
+    }
 
     public static void runFile(String path) throws IOException {
         run(FileReader.readSource(path));
 
-        if (hadError || hadRuntimeError) {
+        if ((hadError || hadRuntimeError) && exitOnFailure) {
             System.exit(1);
         }
     }
@@ -63,17 +74,30 @@ public class DashLang {
         hadRuntimeError = true;
     }
 
+    public static boolean hasErrors() {
+        return hadError || hadRuntimeError;
+    }
+
+    public static void resetErrors() {
+        hadError = false;
+        hadRuntimeError = false;
+    }
+
     private static void run(String source) {
-        System.out.println("Source:");
-        System.out.println(source);
-        System.out.println();
+        if (debug) {
+            System.out.println("Source:");
+            System.out.println(source);
+            System.out.println();
+        }
 
         Lexer lexer = new Lexer(source);
         List<Token> tokens = lexer.scanTokens();
-        for (Token token : tokens) {
-            System.out.println("Token " + token);
+        if (debug) {
+            for (Token token : tokens) {
+                System.out.println("Token " + token);
+            }
+            System.out.println();
         }
-        System.out.println();
 
         Parser parser = new Parser(tokens);
         List<Statement> statements = parser.parse();
