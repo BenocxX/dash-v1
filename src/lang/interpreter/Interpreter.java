@@ -1,6 +1,7 @@
 package lang.interpreter;
 
 import lang.DashLang;
+import lang.environment.Environment;
 import lang.errors.RuntimeError;
 import lang.expressions.Expression;
 import lang.statements.Statement;
@@ -9,6 +10,8 @@ import lang.tokens.Token;
 import java.util.List;
 
 public class Interpreter {
+    private Environment environment = new Environment();
+
     public void interpret(List<Statement> statements) {
         try {
             for (Statement statement : statements) {
@@ -122,5 +125,9 @@ public class Interpreter {
         }
 
         throw new RuntimeError(operator, "Operands must be numbers");
+    }
+
+    public Environment getEnvironment() {
+        return environment;
     }
 }
