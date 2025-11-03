@@ -27,6 +27,15 @@ public class Environment {
         values.put(name, value);
     }
 
+    public void assign(Token name, Object value) {
+        if (values.containsKey(name.lexeme)) {
+            values.put(name.lexeme, value);
+            return;
+        }
+
+        throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+    }
+
     // Quoi faire si la variable n'existe pas?
     // 1. Syntax error lors du parsing
     // 2. Throw un runtime error lors de l'execution

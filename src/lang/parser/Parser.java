@@ -83,9 +83,33 @@ public class Parser {
         return new ExpressionStatement(expression);
     }
 
-    // expression -> equality ;
+    // expression -> assignment ;
     private Expression expression() {
-        return equality();
+        return assignment();
+    }
+
+    // assignment -> IDENTIFIER "=" assignment | equality ;
+    // N'oubliez pas que assignment est "récursif", il peut se chain
+    // ex: x = y = z = 8; // x va avoir la valeur de 8
+    private Expression assignment() {
+        Expression expression = equality();
+
+        if (match(TokenType.EQUAL)) {
+            Token equals = previous();
+            Expression value = assignment();
+
+            if (expression instanceof VariableExpression) {
+                Token name = ((VariableExpression) expression).name;
+                return new AssignExpression(name, value);
+            }
+
+            // On report l'erreur, mais on ne throw pas car les parser n'est
+            // pas mélangé, il va simplement passer au prochain statement.
+            // ex: 5 = 2 + 2;
+            error(equals, "Invalid assignment target.");
+        }
+
+        return expression;
     }
 
     // (true) == (10 <= 4 + 2 * 3 / 1 - -2 + 3);
