@@ -59,12 +59,25 @@ public class Parser {
         return new VariableStatement(name, initializer);
     }
 
-    // statement -> exprStmt | printStmt | block
+    // statement -> exprStmt | ifStmt | printStmt | block
     private Statement statement() {
+        if (match(TokenType.IF)) return ifStatement();
         if (match(TokenType.PRINT)) return printStatement();
         if (match(TokenType.LEFT_BRACE)) return new BlockStatement(block());
 
         return expressionStatement();
+    }
+
+    // if -> "if" "(" expression ")" statement ( "else" statement )? ;
+    private Statement ifStatement() {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+        Expression condition = expression();
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after 'if' condition.");
+
+        Statement thenBranch = statement();
+        Statement elseBranch = match(TokenType.ELSE) ? statement() : null;
+
+        return new IfStatement(condition, thenBranch, elseBranch);
     }
 
     // printStmt -> "print" expression ";" ;
