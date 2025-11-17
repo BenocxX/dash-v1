@@ -111,11 +111,11 @@ public class Parser {
         return assignment();
     }
 
-    // assignment -> IDENTIFIER "=" assignment | equality ;
+    // assignment -> IDENTIFIER "=" assignment | logicOr ;
     // N'oubliez pas que assignment est "récursif", il peut se chain
     // ex: x = y = z = 8; // x va avoir la valeur de 8
     private Expression assignment() {
-        Expression expression = equality();
+        Expression expression = logicOr();
 
         if (match(TokenType.EQUAL)) {
             Token equals = previous();
@@ -130,6 +130,32 @@ public class Parser {
             // pas mélangé, il va simplement passer au prochain statement.
             // ex: 5 = 2 + 2;
             error(equals, "Invalid assignment target.");
+        }
+
+        return expression;
+    }
+
+    // logicOr -> logicAnd ( "or" logicAnd )* ;
+    private Expression logicOr() {
+        Expression expression = logicAnd();
+
+        while (match(TokenType.OR)) {
+            Token operator = previous();
+            Expression right = logicAnd();
+            expression = new LogicalExpression(expression, operator, right);
+        }
+
+        return expression;
+    }
+
+    // logicAnd -> equality ( "and" equality )* ;
+    private Expression logicAnd() {
+        Expression expression = equality();
+
+        while (match(TokenType.AND)) {
+            Token operator = previous();
+            Expression right = equality();
+            expression = new LogicalExpression(expression, operator, right);
         }
 
         return expression;

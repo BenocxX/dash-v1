@@ -1,3 +1,4 @@
-var x = 3;
+var x = 6;
 
-if (x < 5) print "Less than 5";
+if (x < 5 or x > 10)
+    print "Less than 5 or greater than 10";
