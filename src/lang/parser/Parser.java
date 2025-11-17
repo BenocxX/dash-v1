@@ -8,6 +8,7 @@ import lang.tokens.Token;
 import lang.tokens.TokenType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Parser {
@@ -59,10 +60,11 @@ public class Parser {
         return new VariableStatement(name, initializer);
     }
 
-    // statement -> exprStmt | ifStmt | whileStmt | printStmt | block
+    // statement -> exprStmt | ifStmt | whileStmt | forStmt | printStmt | block
     private Statement statement() {
         if (match(TokenType.IF)) return ifStatement();
         if (match(TokenType.WHILE)) return whileStatement();
+        if (match(TokenType.FOR)) return forStatement();
         if (match(TokenType.PRINT)) return printStatement();
         if (match(TokenType.LEFT_BRACE)) return new BlockStatement(block());
 
@@ -90,6 +92,24 @@ public class Parser {
         Statement body = statement();
 
         return new WhileStatement(condition, body);
+    }
+
+    // forStmt -> "for" "(" ( varDeclaration | exprStmt ) ";" expression ";" expression ")" statement ;
+    private Statement forStatement() {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+
+        Statement initializer = match(TokenType.VAR) ? varDeclaration() : expressionStatement();
+
+        Expression condition = expression();
+        consume(TokenType.SEMICOLON, "Expect ';' after for-loop condition.");
+
+        Statement increment = new ExpressionStatement(expression());
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after for-loop increment.");
+
+        Statement body = new BlockStatement(Arrays.asList(statement(), increment));
+        Statement whileStatement = new WhileStatement(condition, body);
+
+        return new BlockStatement(Arrays.asList(initializer, whileStatement));
     }
 
     // printStmt -> "print" expression ";" ;
