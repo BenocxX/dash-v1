@@ -59,9 +59,10 @@ public class Parser {
         return new VariableStatement(name, initializer);
     }
 
-    // statement -> exprStmt | ifStmt | printStmt | block
+    // statement -> exprStmt | ifStmt | whileStmt | printStmt | block
     private Statement statement() {
         if (match(TokenType.IF)) return ifStatement();
+        if (match(TokenType.WHILE)) return whileStatement();
         if (match(TokenType.PRINT)) return printStatement();
         if (match(TokenType.LEFT_BRACE)) return new BlockStatement(block());
 
@@ -78,6 +79,17 @@ public class Parser {
         Statement elseBranch = match(TokenType.ELSE) ? statement() : null;
 
         return new IfStatement(condition, thenBranch, elseBranch);
+    }
+
+    // whileStmt -> "while" "(" expression ")" statement ;
+    private Statement whileStatement() {
+        consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
+        Expression condition = expression();
+        consume(TokenType.RIGHT_PAREN, "Expect ')' after 'while' condition.");
+
+        Statement body = statement();
+
+        return new WhileStatement(condition, body);
     }
 
     // printStmt -> "print" expression ";" ;
