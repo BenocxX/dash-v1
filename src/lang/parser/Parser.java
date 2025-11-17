@@ -106,10 +106,10 @@ public class Parser {
         Statement increment = new ExpressionStatement(expression());
         consume(TokenType.RIGHT_PAREN, "Expect ')' after for-loop increment.");
 
-        Statement body = new BlockStatement(Arrays.asList(statement(), increment));
+        Statement body = new BlockStatement(statement(), increment);
         Statement whileStatement = new WhileStatement(condition, body);
 
-        return new BlockStatement(Arrays.asList(initializer, whileStatement));
+        return new BlockStatement(initializer, whileStatement);
     }
 
     // printStmt -> "print" expression ";" ;
