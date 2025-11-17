@@ -3,10 +3,7 @@ package lang.parser;
 import lang.DashLang;
 import lang.errors.ParseError;
 import lang.expressions.*;
-import lang.statements.ExpressionStatement;
-import lang.statements.PrintStatement;
-import lang.statements.Statement;
-import lang.statements.VariableStatement;
+import lang.statements.*;
 import lang.tokens.Token;
 import lang.tokens.TokenType;
 
@@ -62,9 +59,10 @@ public class Parser {
         return new VariableStatement(name, initializer);
     }
 
-    // statement -> exprStmt | printStmt
+    // statement -> exprStmt | printStmt | block
     private Statement statement() {
         if (match(TokenType.PRINT)) return printStatement();
+        if (match(TokenType.LEFT_BRACE)) return new BlockStatement(block());
 
         return expressionStatement();
     }
@@ -74,6 +72,18 @@ public class Parser {
         Expression expression = expression();
         consume(TokenType.SEMICOLON, "Expect ';' after value.");
         return new PrintStatement(expression);
+    }
+
+    // block -> "{" declaration* "}" ;
+    private List<Statement> block() {
+        List<Statement> statements = new ArrayList<>();
+
+        while(!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+            statements.add(declaration());
+        }
+
+        consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
+        return statements;
     }
 
     // exprStmt -> expression ";" ;

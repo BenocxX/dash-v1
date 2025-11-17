@@ -22,6 +22,20 @@ public class Interpreter {
         }
     }
 
+    public void interpretBlock(List<Statement> statements, Environment environment)  {
+        Environment previous = this.environment;
+
+        try {
+            this.environment = environment;
+
+            for (Statement statement : statements) {
+                statement.interpret(this);
+            }
+        } finally {
+            this.environment = previous;
+        }
+    }
+
     public Object add(Object left, Object right) {
         if (left instanceof Double && right instanceof Double) {
             return (double) left + (double) right;
